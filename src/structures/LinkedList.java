@@ -2,141 +2,114 @@ package structures;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.Iterator;
 
-public class LinkedList<T> implements Iterable<T> {
+class LinkedList<E> implements List<E>, Iterable<E>{
 
-    private Node head;
-    private Node tail;
-    private int size = 0;
+    private Node<E> head;
+    private int size;
 
     public LinkedList() {
         this.head = null;
-        this.tail = null;
+        this.size = 0;
     }
 
-    public void add(T e){
-        if(e == null){
-            return;
-        }
-        if(size == 0){
-            head = new Node(e, tail, tail);
-            tail.previous = head;
-            tail.next = head;
-        }
-        else {
-            tail.next = new Node(e, head, tail);
-            tail = tail.next;
-        }
-        size++;
+    @Override
+    public void add(E e) {
+        add(head, e);
     }
 
-    public void addFirst(T e){
-        if(e == null) return;
-        if(size == 0){
-            add(e);
+    private void add(Node<E> n, E e){
+        if(head == null){
+            head = new Node<E>(null, e);
+        }
+        else if(head.next == null){
+            head.next = new Node<E>(null, e);
         }
         else {
-            head = new Node(e, head, tail);
-            tail.next = head;
-            size++;
+            add(head.next, e);
         }
     }
 
-//    public boolean addAll(Collection<T> c){
-//        if(c == null){
-//            throw new NullPointerException("Collection for addAll argument is null");
-//        }
-//        return addAll(0, c);
-//    }
-
-//    public boolean addAll(int index, Collection<T> c){
-//        if(c == null){
-//            throw new NullPointerException("Collection for addAll argument is null");
-//        }
-//        Node temp = head;
-//        Iterator<T> iterator = c.iterator();
-//        for (int i = 0; i < index; i ++){
-//            temp = temp.next;
-//        }
-//
-//        while (iterator.hasNext()){
-//            temp.next = temp;
-//            temp.value = iterator.next();
-//            temp.next.previous = temp;
-//        }
-//        size += c.size();
-//        return true;
-//    }
-
-    public T removeFirst(){
-        head = head.next;
-        tail = head;
-        head.previous = tail;
-        size--;
-        return head.value;
+    @Override
+    public E remove(int i) throws IndexOutOfBoundsException {
+        if(i >= size){
+            throw new IndexOutOfBoundsException();
+        }
+        return remove(head, 0, 1);
     }
 
-    public T remove(){
-        tail = tail.previous;
-        tail.next = head;
-        head.previous = tail;
-        size--;
-        return tail.value;
+    private E remove(Node<E> n, int loc, int i) {
+        E val;
+        if(loc == i){
+            val = n.value;
+            head = head.next;
+            return val;
+        }
+        return remove(head.next,loc+1, i);
     }
 
-    public void clear(){
-        head = null;
-        tail = null;
-        size = 0;
+    @Override
+    public E get(int i) throws IndexOutOfBoundsException {
+        return get(head, 0, i);
     }
 
-    public int size(){
+    private E get(Node<E> n, int loc, int i) {
+        E val;
+        if(loc == i){
+            val = n.value;
+            return val;
+        }
+        return get(head.next,loc+1, i);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    @Override
+    public int size() {
         return size;
     }
 
     @NotNull
     @Override
-    public Iterator iterator() {
-        return new LinkedListIterator();
+    public Iterator<E> iterator() {
+        return new LinkedListIterator(head);
     }
 
-    private class Node{
-        T value;
-        Node next;
-        Node previous;
+    private class Node<E>{
+        Node<E> next;
+        E value;
 
-        Node(T data) {
-            this.value = data;
-            next = previous = null;
-        }
-
-        public Node(T data, Node next, Node previous) {
-            this.value = data;
+        public Node(Node<E> next, E value) {
             this.next = next;
-            this.previous = previous;
+            this.value = value;
+        }
+
+        public Node(E value) {
+            this.value = value;
+            this.next = null;
         }
     }
 
-    private class LinkedListIterator implements Iterator<T>{
-        Node temp;
-        public LinkedListIterator() {
-            temp = head;
+    private class LinkedListIterator implements Iterator<E>{
+
+        Node<E> node;
+
+        public LinkedListIterator(Node<E> node) {
+            this.node = node;
         }
 
         @Override
         public boolean hasNext() {
-            return temp.next != null;
+            return node.next != null;
         }
 
         @Override
-        public T next() {
-            T val = temp.value;
-            temp = temp.next;
-            return val;
+        public E next() {
+            return node.value;
         }
     }
-
-
 }
