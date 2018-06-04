@@ -2,6 +2,10 @@ package structures;
 
 public class SearchSort {
 
+    ////////////////////////////////////////////////////////////
+    ///// BINARY SEARCH
+    ////////////////////////////////////////////////////////////
+
     public static boolean binarySearch(int[] data, int val) {
         int lo = 0;
         int hi = data.length -1;
@@ -18,6 +22,12 @@ public class SearchSort {
         }
         return false;
     }
+
+
+
+    ////////////////////////////////////////////////////////////
+    ///// MERGE SORT
+    ////////////////////////////////////////////////////////////
 
     public static void mergeSort(int[] data) {
         int[] helper = new int[data.length];
@@ -59,6 +69,12 @@ public class SearchSort {
             data[current+i] = helper[helperLeft+i];
         }
     }
+
+
+
+    ////////////////////////////////////////////////////////////
+    ///// QUICK SORT
+    ////////////////////////////////////////////////////////////
 
     public static void quickSort(int[] data) {
         quickSort(data, 0, data.length-1);
